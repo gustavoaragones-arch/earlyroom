@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { IconCheck, IconPlus } from "@tabler/icons-react";
+import Link from "next/link";
 import React from "react";
 import { Container } from "./container";
 import { GridLineHorizontal, GridLineVertical } from "./grid-lines";
@@ -153,9 +154,14 @@ function PricingCard({ plan }: { plan: Plan }) {
             {typeof plan.price === "number" ? `per ${plan.frequency}` : "custom pricing"}
           </span>
         </div>
-        <Button variant={plan.featured ? "default" : "outline"}>
-          {plan.buttonText}
-        </Button>
+        <Link href="/signup">
+          <Button
+            variant={plan.featured ? "default" : "outline"}
+            className="w-full"
+          >
+            {plan.buttonText}
+          </Button>
+        </Link>
         <div className="mt-1">
           {plan.features.map((feature, idx) => (
             <FeatureItem key={idx}>{feature}</FeatureItem>

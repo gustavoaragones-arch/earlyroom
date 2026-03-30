@@ -2,6 +2,7 @@
 
 import { IconArrowRight } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "./button";
 import { Heading } from "./heading";
 import { Subheading } from "./subheading";
@@ -73,10 +74,12 @@ export function CTA() {
           Setup takes 15 minutes. Your supervisors will notice the difference on
           day one. No credit card required.
         </Subheading>
-        <Button className="mt-6">
-          <span>Start free trial</span>
-          <IconArrowRight className="mt-0.5 h-4 w-4 text-white transition-transform duration-200 group-hover:translate-x-1" />
-        </Button>
+        <Link href="/signup">
+          <Button className="mt-6">
+            <span>Start free trial</span>
+            <IconArrowRight className="mt-0.5 h-4 w-4 text-white transition-transform duration-200 group-hover:translate-x-1" />
+          </Button>
+        </Link>
       </div>
 
       <div className="relative max-h-140 overflow-hidden rounded-2xl bg-white/60 mask-t-from-50% mask-b-from-50% p-3 dark:bg-neutral-950/50">

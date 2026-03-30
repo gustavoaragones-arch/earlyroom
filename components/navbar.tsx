@@ -136,9 +136,14 @@ export const Navbar = () => {
         {/* Desktop Right Side */}
         <div className="hidden items-center gap-3 lg:flex lg:gap-4">
           <Link href="/login" className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">
-            Login
+            Sign in
           </Link>
-          <Button className="px-4 py-2 text-sm">Start free trial</Button>
+          <Link
+            href="/signup"
+            className="relative inline-flex cursor-pointer items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] from-brand-secondary to-brand-primary bg-linear-to-b text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.2)] hover:from-brand-secondary hover:to-brand-primary hover:shadow-[0_1px_2px_rgba(0,0,0,0.1),0_3px_5px_rgba(30,144,255,0.5),inset_0_1px_0_rgba(255,255,255,0.25)]"
+          >
+            Start free trial
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -179,8 +184,14 @@ export const Navbar = () => {
           <div className="mt-auto pt-6">
             <div className="mb-6 h-px w-full bg-[linear-gradient(to_right,transparent,rgba(0,0,0,0.15)_20%,rgba(0,0,0,0.15)_80%,transparent)] mask-[repeating-linear-gradient(to_right,black_0px,black_4px,transparent_4px,transparent_8px)] dark:hidden" />
             <div className="mb-6 hidden h-px w-full bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.2)_20%,rgba(255,255,255,0.2)_80%,transparent)] mask-[repeating-linear-gradient(to_right,black_0px,black_4px,transparent_4px,transparent_8px)] dark:block" />
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block w-full rounded-xl border border-neutral-300 px-4 py-3.5 text-center text-base font-medium text-neutral-900 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">Login</Link>
-            <Button onClick={() => setMobileMenuOpen(false)} className="mt-3 w-full rounded-xl px-4 py-3.5 text-base">Start free trial</Button>
+            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block w-full rounded-xl border border-neutral-300 px-4 py-3.5 text-center text-base font-medium text-neutral-900 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">Sign in</Link>
+            <Link
+              href="/signup"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-3 flex w-full items-center justify-center rounded-xl from-brand-secondary to-brand-primary bg-linear-to-b px-4 py-3.5 text-base font-medium text-white transition-all duration-200 active:scale-[0.98] [text-shadow:0_1px_2px_rgba(0,0,0,0.2)] hover:from-brand-secondary hover:to-brand-primary hover:shadow-[0_1px_2px_rgba(0,0,0,0.1),0_3px_5px_rgba(30,144,255,0.5),inset_0_1px_0_rgba(255,255,255,0.25)]"
+            >
+              Start free trial
+            </Link>
           </div>
         </div>
       </motion.div>

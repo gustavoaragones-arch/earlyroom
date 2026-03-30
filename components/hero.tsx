@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Button } from "@/components/button";
 import Image from "next/image";
 import { LinesGradientShader } from "./lines-gradient-shader";
@@ -31,12 +32,16 @@ export default function Hero() {
         </p>
 
         <div className="mt-8 flex items-center gap-4">
-          <Button>
-            <span className="flex items-center gap-2">
-              Start free trial <Arrow className="size-4" />
-            </span>
-          </Button>
-          <Button variant="outline">See how it works</Button>
+          <Link href="/signup">
+            <Button>
+              <span className="flex items-center gap-2">
+                Start free trial <Arrow className="size-4" />
+              </span>
+            </Button>
+          </Link>
+          <Link href="#how-it-works">
+            <Button variant="outline">See how it works</Button>
+          </Link>
         </div>
 
         {/* MacBook Window */}

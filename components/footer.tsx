@@ -29,7 +29,7 @@ export function Footer() {
   ];
 
   const signups = [
-    { title: "Start free trial", href: "#" },
+    { title: "Start free trial", href: "/signup" },
     { title: "Login", href: "/login" },
     { title: "Documentation", href: "#" },
   ];
