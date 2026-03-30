@@ -225,9 +225,15 @@ export default function SupervisorDashboard() {
     setGenerating(true);
     setGenerateError("");
 
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+
     const res = await fetch("/api/assignments/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session?.access_token}`,
+      },
       body: JSON.stringify({
         date: new Date().toISOString().split("T")[0],
       }),

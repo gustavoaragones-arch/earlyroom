@@ -1,5 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 interface StaffInput {
@@ -157,32 +156,24 @@ function runAssignmentAlgorithm(
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
+    const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll(); },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {}
-          },
-        },
-      }
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabaseAdminAdmin.auth.getUser(token);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: userData, error: userError } = await supabase
+    const { data: userData, error: userError } = await supabaseAdminAdmin
       .from("users")
       .select("hotel_id, role")
       .eq("id", user.id)
@@ -195,7 +186,7 @@ export async function POST(request: Request) {
     if (!userData?.hotel_id) {
       return NextResponse.json({ error: "No hotel found" }, { status: 400 });
     }
-    if (!["owner", "manager", "supervisor"].includes(userData.role)) {
+    if (!["owner", "manager", "supervisor"].includes(userData?.role ?? "")) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
         { status: 403 }
@@ -206,7 +197,7 @@ export async function POST(request: Request) {
     const date = body.date ?? new Date().toISOString().split("T")[0];
     const staffIds: string[] | undefined = body.staff_ids;
 
-    let staffQuery = supabase
+    let staffQuery = supabaseAdmin
       .from("users")
       .select("id, first_name, speed_factor")
       .eq("hotel_id", userData.hotel_id)
@@ -227,7 +218,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: jobs, error: jobsError } = await supabase
+    const { data: jobs, error: jobsError } = await supabaseAdmin
       .from("cleaning_jobs")
       .select(
         `
@@ -281,7 +272,7 @@ export async function POST(request: Request) {
 
     const results = runAssignmentAlgorithm(staff as StaffInput[], roomInputs);
 
-    await supabase
+    await supabaseAdmin
       .from("assignments")
       .delete()
       .eq("hotel_id", userData.hotel_id)
@@ -296,7 +287,7 @@ export async function POST(request: Request) {
       floor_cluster: r.floor_cluster,
     }));
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseAdmin
       .from("assignments")
       .insert(assignmentRows);
 
@@ -309,7 +300,7 @@ export async function POST(request: Request) {
 
     for (const result of results) {
       for (const jobId of result.room_ids) {
-        await supabase
+        await supabaseAdmin
           .from("cleaning_jobs")
           .update({
             assigned_to: result.staff_id,
