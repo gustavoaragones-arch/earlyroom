@@ -167,12 +167,12 @@ export async function POST(request: Request) {
       .eq("id", user.id)
       .single();
 
+    console.log("[generate] user_id:", user.id, "hotel_id:", userData?.hotel_id, "role:", userData?.role);
+
     if (!userData?.hotel_id) {
       return NextResponse.json({ error: "No hotel found" }, { status: 400 });
     }
-    if (
-      !["owner", "manager", "supervisor"].includes(userData.role as string)
-    ) {
+    if (!["owner", "manager", "supervisor"].includes(userData?.role ?? "")) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
         { status: 403 }
