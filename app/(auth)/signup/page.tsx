@@ -21,7 +21,7 @@ export default function SignupPage() {
     setError("");
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -32,6 +32,11 @@ export default function SignupPage() {
       setError(error.message);
       setLoading(false);
     } else {
+      if (data.user) {
+        await supabase
+          .from("users")
+          .upsert({ id: data.user.id, role: "owner" }, { onConflict: "id", ignoreDuplicates: true });
+      }
       router.refresh();
       router.push("/onboarding/hotel");
     }
