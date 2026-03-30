@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 interface StaffInput {
@@ -156,23 +157,45 @@ function runAssignmentAlgorithm(
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cookieStore = await cookies();
 
-    const { data: userData } = await supabase
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return cookieStore.getAll(); },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {}
+          },
+        },
+      }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { data: userData, error: userError } = await supabase
       .from("users")
       .select("hotel_id, role")
       .eq("id", user.id)
       .single();
 
-    console.log("[generate] user_id:", user.id, "hotel_id:", userData?.hotel_id, "role:", userData?.role);
+    console.log("user.id:", user.id);
+    console.log("userData:", userData);
+    console.log("userError:", userError);
 
     if (!userData?.hotel_id) {
       return NextResponse.json({ error: "No hotel found" }, { status: 400 });
     }
-    if (!["owner", "manager", "supervisor"].includes(userData?.role ?? "")) {
+    if (!["owner", "manager", "supervisor"].includes(userData.role)) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
         { status: 403 }
