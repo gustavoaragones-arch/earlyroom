@@ -167,13 +167,13 @@ export async function POST(request: Request) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabaseAdminAdmin.auth.getUser(token);
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: userData, error: userError } = await supabaseAdminAdmin
+    const { data: userData, error: userError } = await supabaseAdmin
       .from("users")
       .select("hotel_id, role")
       .eq("id", user.id)
